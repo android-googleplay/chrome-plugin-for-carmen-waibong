@@ -2,9 +2,14 @@
   "use strict";
 
   const PANEL_ID = "eskemas-oa-totals";
-  const KEYWORD = "eskemas";
+  const STORAGE_KEY = "waibong-company-contains";
+  const DEFAULT_KEYWORD = "eskemas";
   const METRICS = ["服务金额", "收款金额", "服务成本", "服务利润", "分享金额"];
   let updateTimer;
+
+  function getKeyword() {
+    return normalize(localStorage.getItem(STORAGE_KEY) || DEFAULT_KEYWORD);
+  }
 
   function normalize(value) {
     return String(value ?? "").replace(/\s+/g, " ").trim();
@@ -38,7 +43,7 @@
     )[0];
   }
 
-  function collect(table) {
+  function collect(table, keyword) {
     const headerCells = [...table.querySelectorAll("thead th, tr:first-child th")];
     const headers = headerCells.map((cell) => normalize(cell.textContent));
     const companyIndex = headers.indexOf("Company");
@@ -51,7 +56,7 @@
       const cells = [...row.children].filter((cell) => cell.matches("td, th"));
       if (cells.length <= companyIndex) return;
       const company = normalize(cells[companyIndex]?.textContent).toLowerCase();
-      if (!company.includes(KEYWORD)) return;
+      if (!keyword || !company.includes(keyword.toLowerCase())) return;
 
       matchedRows += 1;
       row.classList.add("eskemas-oa-match");
@@ -77,34 +82,47 @@
       .join(" / ");
   }
 
-  function render(result) {
+  function render(result, keyword) {
     let panel = document.getElementById(PANEL_ID);
     if (!panel) {
       panel = document.createElement("aside");
       panel.id = PANEL_ID;
       panel.innerHTML = `
         <div class="eskemas-title">
-          <span>Eskemas 合计</span>
+          <span>Company 合计</span>
           <button type="button" aria-label="折叠">−</button>
         </div>
-        <div class="eskemas-body"></div>
+        <div class="eskemas-body">
+          <label class="eskemas-filter">
+            <span>Company 包含</span>
+            <input type="text" autocomplete="off" spellcheck="false" placeholder="例如：xx">
+          </label>
+          <div class="eskemas-count"></div>
+          <div class="eskemas-results"></div>
+        </div>
       `;
       panel.querySelector("button").addEventListener("click", () => {
         panel.classList.toggle("is-collapsed");
         panel.querySelector("button").textContent = panel.classList.contains("is-collapsed") ? "+" : "−";
       });
+      panel.querySelector("input").addEventListener("input", (event) => {
+        localStorage.setItem(STORAGE_KEY, event.target.value);
+        update();
+      });
       document.body.appendChild(panel);
     }
 
-    panel.querySelector(".eskemas-body").innerHTML = `
-      <div class="eskemas-count">找到 <strong>${result.matchedRows}</strong> 条 Company 包含 “${KEYWORD}”</div>
-      ${METRICS.map((metric) => `
+    const input = panel.querySelector("input");
+    if (document.activeElement !== input) input.value = keyword;
+    panel.querySelector(".eskemas-count").textContent = keyword
+      ? `找到 ${result.matchedRows} 条包含 “${keyword}”`
+      : "请输入要查找的文字";
+    panel.querySelector(".eskemas-results").innerHTML = METRICS.map((metric) => `
         <div class="eskemas-total">
           <span>${metric}</span>
           <strong>${formatTotals(result.totals[metric])}</strong>
         </div>
-      `).join("")}
-    `;
+      `).join("");
   }
 
   function update() {
@@ -116,7 +134,8 @@
         existingPanel?.remove();
         return;
       }
-      render(collect(table));
+      const keyword = getKeyword();
+      render(collect(table, keyword), keyword);
     }, 120);
   }
 

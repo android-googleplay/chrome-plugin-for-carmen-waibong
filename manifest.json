@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Eskemas OA Totals",
-  "version": "1.0.1",
-  "description": "Totals selected Income Report amounts for companies containing Eskemas.",
+  "name": "Waibong Company Totals",
+  "version": "1.1.0",
+  "description": "Totals Income Report amounts for companies containing text chosen by the user.",
   "content_scripts": [
     {
       "matches": ["https://oa.waibong.net/*"],

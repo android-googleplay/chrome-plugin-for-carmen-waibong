@@ -40,8 +40,37 @@
 #eskemas-oa-totals.is-collapsed .eskemas-body { display: none; }
 #eskemas-oa-totals.is-collapsed { width: 190px; }
 
+#eskemas-oa-totals .eskemas-filter {
+  display: block;
+  padding: 4px 0 10px;
+  color: #5f6e76;
+  font-weight: 600;
+}
+
+#eskemas-oa-totals .eskemas-filter span {
+  display: block;
+  margin-bottom: 5px;
+}
+
+#eskemas-oa-totals .eskemas-filter input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 8px 10px;
+  color: #203040;
+  background: #ffffff;
+  border: 1px solid #b9cbd1;
+  border-radius: 6px;
+  outline: none;
+  font: inherit;
+}
+
+#eskemas-oa-totals .eskemas-filter input:focus {
+  border-color: #079b94;
+  box-shadow: 0 0 0 3px rgba(7, 155, 148, 0.14);
+}
+
 #eskemas-oa-totals .eskemas-count {
-  padding: 4px 0 8px;
+  padding: 0 0 8px;
   color: #5f6e76;
   border-bottom: 1px solid #e7eff2;
 }
