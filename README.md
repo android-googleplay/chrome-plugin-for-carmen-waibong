@@ -1,5 +1,7 @@
 # Waibong Company Totals
 
+呢個係畀 Carmen 喺 `oa.waibong.net` 按關鍵字篩選同查看數據嘅 Chrome 擴充功能。用戶可以輸入文字，篩選並計算收入同成本嘅總額。
+
 A local Chrome extension for `oa.waibong.net`. On the Income Report page it:
 
 - lets the user enter any **Company contains** text (for example, `xx` matches `abc xx company`);
